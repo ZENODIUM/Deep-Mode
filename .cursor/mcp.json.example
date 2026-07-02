@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "wellbeing-guardian": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/absolute/path/to/Deepmode",
+        "run",
+        "server.py"
+      ],
+      "env": {
+        "DEEPMODE_DB": "/absolute/path/to/Deepmode/guardian.db",
+        "DEEPMODE_ADB_DIR": "/absolute/path/to/android/platform-tools",
+        "PATH": "/absolute/path/to/android/platform-tools:/usr/local/bin:/usr/bin:/bin"
+      }
+    }
+  }
+}

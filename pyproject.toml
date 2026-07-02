@@ -1,0 +1,14 @@
+[project]
+name = "deepmode"
+version = "0.1.0"
+description = "Digital Wellbeing Guardian — ADB monitor + FastMCP server"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=2.0",
+]
+
+[project.scripts]
+deepmode-monitor = "monitor:main"
+deepmode-server = "server:main"
+deepmode-inspector = "inspector:main"

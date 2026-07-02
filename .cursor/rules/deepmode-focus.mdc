@@ -1,0 +1,38 @@
+---
+description: Deepmode coding-session focus — set limits via MCP, monitor enforces on phone
+alwaysApply: true
+---
+
+# Deepmode focus mode
+
+This project includes **wellbeing-guardian** MCP. Use it for coding-session focus, not generic screen-time advice.
+
+## Roles
+
+- **Cursor (you)** — start/end deep work, set limits via MCP, read usage and nudges
+- **monitor.py** (user runs in terminal) — logs foreground usage and sends the phone HOME when over limit
+- Do not claim you can push notifications or nudge the phone directly; enforcement is monitor.py only
+
+## When user says "start deep work" (or similar)
+
+1. **Default:** call `start_deep_work()` — limits distraction apps at 5 min and **starts monitor automatically**
+2. **Optional customization:** only ask about apps/minutes if user wants changes
+3. Custom: `start_deep_work(apps="Instagram,Snapchat", limit_minutes=10)`
+
+## When user says "end deep work" or is done coding
+
+Call `end_deep_work()` — ends session and **stops the monitor**.
+
+## After completing a substantial coding task
+
+If wellbeing-guardian MCP is available:
+
+1. Read `device://usage-summary`, `device://intervention-history`, and `device://session-status`
+2. If distraction usage or nudges occurred, add **one brief focus line** at the end (not preachy)
+3. If no distraction usage, skip the focus line
+
+## Limits
+
+- `start_deep_work` does not require user to pick apps — defaults are fine
+- Never call `set_app_limit` or `remove_app_limit` without user consent
+- Use `list_apps` if an app name is ambiguous

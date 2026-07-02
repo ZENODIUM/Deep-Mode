@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Runtime data (local sessions)
+*.db
+*.db-wal
+*.db-shm
+.monitor.pid
+monitor.log
+
+# Secrets and local overrides
+.env
+.env.*
+*.local
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+
+# Cursor — user-specific paths (see mcp.json.example)
+.cursor/mcp.json
