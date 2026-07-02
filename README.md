@@ -140,30 +140,97 @@ Set <code>DEEPMODE_ADB_DIR</code> to your <code>platform-tools</code> folder so 
 <strong style="color: #FFD700;">Cursor users:</strong> <code>.cursor/rules/deepmode-focus.mdc</code> teaches the agent when to start sessions, check usage, and end deep work. Other clients can use the built-in <code>start-deep-work</code> and <code>behavior-audit</code> prompts instead.
 </p>
 
-<h2 style="color: #FFD700;">MCP surface</h2>
+<h2 style="color: #FFD700;">MCP API reference</h2>
 
-<p style="color: #FFD700;"><strong>Tools</strong></p>
+<p style="color: #FFFFFF;">
+The <code>Wellbeing-Guardian</code> MCP server exposes three kinds of primitives. Your agent calls <strong style="color: #FFD700;">tools</strong> to act, reads <strong style="color: #FFD700;">resources</strong> for live state, and uses <strong style="color: #FFD700;">prompts</strong> as guided workflows.
+</p>
+
+<h3 style="color: #FFD700;">Tools</h3>
+
+<p style="color: #FFFFFF;">Callable actions the agent invokes on your behalf.</p>
 
 <table style="color: #FFFFFF; width: 100%;">
-<tr><th style="color: #FFD700; text-align: left;">Tool</th><th style="color: #FFD700; text-align: left;">Purpose</th></tr>
-<tr><td><code>start_deep_work(apps="", limit_minutes=5)</code></td><td>Start session, apply limits, launch monitor</td></tr>
-<tr><td><code>end_deep_work()</code></td><td>End session and stop monitor</td></tr>
-<tr><td><code>list_apps()</code></td><td>Installed apps as friendly name → package</td></tr>
-<tr><td><code>set_app_limit(app, limit_minutes)</code></td><td>Manual daily limit outside a session</td></tr>
-<tr><td><code>remove_app_limit(app)</code></td><td>Remove a manual limit</td></tr>
+<tr>
+  <th style="color: #FFD700; text-align: left;">Tool</th>
+  <th style="color: #FFD700; text-align: left;">Parameters</th>
+  <th style="color: #FFD700; text-align: left;">Purpose</th>
+</tr>
+<tr>
+  <td><code>start_deep_work</code></td>
+  <td><code>apps</code> (optional CSV), <code>limit_minutes</code> (default 5), <code>bonus_every_minutes</code> (default 30)</td>
+  <td>Start a coding focus session. Applies per-app limits to distraction apps (defaults to installed common ones), scales limit +1 min every 30 min of session, and <strong>starts the ADB monitor automatically</strong>.</td>
+</tr>
+<tr>
+  <td><code>end_deep_work</code></td>
+  <td>—</td>
+  <td>End the active session, remove session-scaled limits, and <strong>stop the monitor</strong>.</td>
+</tr>
+<tr>
+  <td><code>list_apps</code></td>
+  <td>—</td>
+  <td>List apps on the connected phone as <code>App Name → package.name</code>. Use when resolving names or letting the user pick apps.</td>
+</tr>
+<tr>
+  <td><code>set_app_limit</code></td>
+  <td><code>app</code> (name or package), <code>limit_minutes</code></td>
+  <td>Set a <strong>daily</strong> usage cap for one app, outside of a deep-work session. Accepts friendly names like <code>Instagram</code>.</td>
+</tr>
+<tr>
+  <td><code>remove_app_limit</code></td>
+  <td><code>app</code> (name or package)</td>
+  <td>Remove a daily limit previously set with <code>set_app_limit</code>.</td>
+</tr>
 </table>
 
-<p style="color: #FFD700;"><strong>Resources</strong></p>
+<h3 style="color: #FFD700;">Resources</h3>
+
+<p style="color: #FFFFFF;">Read-only snapshots the agent can pull into context (no side effects).</p>
 
 <table style="color: #FFFFFF; width: 100%;">
-<tr><th style="color: #FFD700; text-align: left;">URI</th><th style="color: #FFD700; text-align: left;">Content</th></tr>
-<tr><td><code>device://usage-summary</code></td><td>Today's per-app minutes</td></tr>
-<tr><td><code>device://intervention-history</code></td><td>Nudge and enforcement log</td></tr>
-<tr><td><code>device://session-status</code></td><td>Active session and scaling info</td></tr>
+<tr>
+  <th style="color: #FFD700; text-align: left;">URI</th>
+  <th style="color: #FFD700; text-align: left;">Returns</th>
+  <th style="color: #FFD700; text-align: left;">When to use</th>
+</tr>
+<tr>
+  <td><code>device://usage-summary</code></td>
+  <td>Today's per-app usage in minutes (friendly app names)</td>
+  <td>Check how much time was spent on distraction apps today — before/after a session or during a focus review.</td>
+</tr>
+<tr>
+  <td><code>device://intervention-history</code></td>
+  <td>Timestamped log of nudges (<code>soft-nudge</code>, <code>reopen-after-nudge</code>, <code>force-stop</code>)</td>
+  <td>See when the monitor sent you home or caught a reopen loop.</td>
+</tr>
+<tr>
+  <td><code>device://session-status</code></td>
+  <td>Whether a deep-work session is active, elapsed time, and current scaled limits</td>
+  <td>Confirm session state or explain active limits to the user.</td>
+</tr>
+</table>
+
+<h3 style="color: #FFD700;">Prompts</h3>
+
+<p style="color: #FFFFFF;">Pre-built instruction templates the agent can load for common workflows.</p>
+
+<table style="color: #FFFFFF; width: 100%;">
+<tr>
+  <th style="color: #FFD700; text-align: left;">Prompt</th>
+  <th style="color: #FFD700; text-align: left;">Purpose</th>
+</tr>
+<tr>
+  <td><code>start-deep-work</code></td>
+  <td>Guides the agent to call <code>start_deep_work</code> with smart defaults, summarize what was limited, and remind it to call <code>end_deep_work</code> when done. Use when the user says "start deep work" or begins a coding session.</td>
+</tr>
+<tr>
+  <td><code>behavior-audit</code></td>
+  <td>Guides a post-session review: read usage + intervention resources, cross-reference nudges vs. app time, and suggest limit tweaks. Use at end of task or when the user asks how focus went.</td>
+</tr>
 </table>
 
 <p style="color: #FFFFFF;">
-<strong style="color: #FFD700;">Prompts:</strong> <code>start-deep-work</code>, <code>behavior-audit</code>
+<strong style="color: #FFD700;">Typical flow:</strong> prompt <code>start-deep-work</code> → tool <code>start_deep_work</code> → (coding) → resource <code>device://usage-summary</code> + <code>device://intervention-history</code> → prompt <code>behavior-audit</code> → tool <code>end_deep_work</code>.
 </p>
 
 <h2 style="color: #FFD700;">Environment variables</h2>
